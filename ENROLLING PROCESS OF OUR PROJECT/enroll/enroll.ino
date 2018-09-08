@@ -1,77 +1,66 @@
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
-const int busser=5;
+const int busser=4;
 SoftwareSerial mySerial(2, 3);
-
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
-
 uint8_t id;
-
 void setup()  
 {
-   pinMode(busser,OUTPUT);
-  Serial.begin(9600);
-  while (!Serial); 
-  delay(100);
-  Serial.println("\n\n***************LICENSE REGISTRATION***************");
-  finger.begin(57600);
-  
-  if (finger.verifyPassword()) {
-    Serial.println("Found fingerprint sensor :)");
-  } else {
-    Serial.println("sorry we can't find fingerprint sensor :(");
-    while (1) { delay(1); }
-  }
+pinMode(busser,OUTPUT);
+Serial.begin(9600);
+while (!Serial); 
+delay(100);
+Serial.println("\n\n***************LICENSE REGISTRATION***************");
+finger.begin(57600);if (finger.verifyPassword()) {
+Serial.println("Found fingerprint sensor :)");
+} else {
+Serial.println("sorry we can't find fingerprint sensor :(");
+while (1) { delay(1); }
 }
-
+}
 uint8_t readnumber(void) {
-  uint8_t num = 0;
-  
-  while (num == 0) {
-    while (! Serial.available());
-    num = Serial.parseInt();
-  }
-  return num;
+uint8_t num = 0;
+while (num == 0) {
+while (! Serial.available());
+num = Serial.parseInt();
 }
-
+return num;
+}
 void loop()
 {
-  Serial.println("READY TO REGISTER YOUR FINGERPRINTS WITH YOUR LICENSE");
-  Serial.println("ENTER YOUR LICENSE NUMBER WHICH IS ALLOCATED TO YOU BY THE GOVERNMENT");
-  id = readnumber();
-  if (id == 0) {
-     return;
-  }
-  Serial.print("Enrolling you *****************");
-  Serial.println(id);
-  
-  while (!  getFingerprintEnroll() );
+Serial.println("READY TO REGISTER YOUR FINGERPRINTS WITH YOUR LICENSE");
+Serial.println("ENTER YOUR LICENSE NUMBER WHICH IS ALLOCATED TO YOU BY THE GOVERNMENT");
+id = readnumber();
+if (id == 0) {
+return;
 }
-
+Serial.print("***************** Enrolling you *****************");
+Serial.println(id);
+while (!  getFingerprintEnroll() );
+}
 uint8_t getFingerprintEnroll() {
-
-  int p = -1;
-  Serial.print("KEEP YOUR PRINTS ON THE SCANNER FOR THE ID - "); Serial.println(id);
-  while (p != FINGERPRINT_OK) {
-    p = finger.getImage();
-    switch (p) {
-    case FINGERPRINT_OK:
-      Serial.println("model captured");
-      break;
-    case FINGERPRINT_NOFINGER:
-      Serial.println(".");
-      break;
-    case FINGERPRINT_PACKETRECIEVEERR:
-      Serial.println("Network error");
-      break;
-    case FINGERPRINT_IMAGEFAIL:
-      Serial.println("Image sensing error,try again");
-      break;
-    default:
-      Serial.println("Unexpectedly error had occured please try again");
-      break;
-    }
-  }
+int p = -1;
+Serial.print("KEEP YOUR PRINTS ON THE SCANNER FOR THE ID - "); Serial.println(id);
+while (p != FINGERPRINT_OK) {
+p = finger.getImage();
+switch (p) {
+case FINGERPRINT_OK:
+Serial.println("model captured");
+break;
+case FINGERPRINT_NOFINGER:
+Serial.println(".");
+break;
+case FINGERPRINT_PACKETRECIEVEERR:
+Serial.println("Network error");
+break;
+case FINGERPRINT_IMAGEFAIL:
+Serial.println("Image sensing error,try again");
+break;
+default:
+Serial.println("Unexpectedly error had occured please try again");
+break;
+}
+}
 p = finger.image2Tz(1);
 switch (p) {
     case FINGERPRINT_OK:
